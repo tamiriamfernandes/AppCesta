@@ -1,11 +1,14 @@
 import { StatusBar, SafeAreaView } from "react-native";
-import Cesta from "./src/pages/Cesta";
+
 import {
   useFonts,
   Montserrat_400Regular,
   Montserrat_700Bold,
 } from "@expo-google-fonts/montserrat";
-import { View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import Cesta from "./src/pages/Cesta";
+import mock from "./src/mocks/cesta";
+import { useCallback } from "react";
 
 export default function App() {
   const [fonteCarregada] = useFonts({
@@ -13,14 +16,19 @@ export default function App() {
     "MontserratBold": Montserrat_700Bold,
   });
 
-  if(!fonteCarregada){
-    return <View />
-  }
+  const onLayoutRootView = useCallback(async () => {
+    if (fonteCarregada) {
+      // This tells the splash screen to hide immediately
+      await SplashScreen.hideAsync();
+    }
+  }, [fonteCarregada]);
+
+  if (!fonteCarregada) return null;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView onLayout={onLayoutRootView} style={{ flex: 1 }}>
       <StatusBar />
-      <Cesta />
+      <Cesta {...mock} />
     </SafeAreaView>
   );
 }
